@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="travel">
+	
+	<!-- 회원의 관심지역 도시 리스트 가져오기(조회수 높은순 상위 6개) -->
+	<select id="usercity" resultType="Map" parameterType="Map">
+		SELECT 
+		ci.CITY_NAME, 
+		ci.CITY_ADD,
+		ci.CITY_VIEWS,
+		ci.CITY_SEQ,
+        fi.SOURCE_UNIQUE_SEQ,
+        fi.PHYSICALFILE_NAME
+		FROM 
+		SS_MEMBER mem, 
+		SS_INT_LOCAL intlo, 
+		SS_LOCAL lo, 
+		SS_COUNTRY co,
+        SS_COMMENT com,
+		SS_CITY ci LEFT OUTER JOIN SS_ATTACHFILE fi
+        ON ci.CITY_SEQ = fi.SOURCE_UNIQUE_SEQ
+		WHERE 
+		mem.MEMBER_SEQ = intlo.MEMBER_SEQ
+		AND 
+		intlo.LOCAL_SEQ = lo.LOCAL_SEQ
+		AND 
+		lo.LOCAL_SEQ = co.LOCAL_SEQ
+		AND 
+		co.COUNTRY_SEQ = ci.COUNTRY_SEQ
+		AND 
+		mem.EMAIL = #{EMAIL}
+		GROUP BY
+		ci.CITY_NAME
+		ORDER BY
+		ci.CITY_VIEWS DESC
+		LIMIT 6	
+	</select>
+	
+	<!-- 회원이 아닐 때 모든 도시의 조회수가 높은순으로 가져온다. -->
+	<select id="nousercity" resultType="Map" parameterType="Map">
+		SELECT 
+		ci.*,
+        fi.SOURCE_UNIQUE_SEQ,
+        fi.PHYSICALFILE_NAME
+		FROM 
+		SS_CITY ci LEFT JOIN SS_ATTACHFILE fi
+        ON ci.CITY_SEQ = fi.SOURCE_UNIQUE_SEQ
+		ORDER BY 
+		CITY_VIEWS DESC
+		LIMIT 6
+	</select>
+	
+	<!-- 각각의 도시에 대한 유저 평점을 가져온다. -->
+	<select id="avgstar" resultType="Map" parameterType="Map">
+		SELECT 
+		ci.CITY_NAME, 
+		TRUNCATE(AVG(com.SS_STAR),1) AS AVG_STAR
+		FROM 
+		SS_CITY ci, 
+		SS_COMMENT com
+		WHERE 
+		ci.CITY_SEQ = com.CITY_SEQ
+		GROUP BY 
+		ci.CITY_NAME
+	</select>
+	
+	<!-- 도시에 대한 조회수를 1증가시킨다. -->
+	<update id="view" parameterType="Map">
+		UPDATE 
+		SS_CITY
+		SET
+		CITY_VIEWS = CITY_VIEWS+1
+		WHERE 
+		CITY_SEQ = #{CITY_SEQ}
+	</update>
+	
+	<!-- 도시에 대한 정보를 처음 가져온다. -->
+	<select id="read" resultType="Map" parameterType="Map">
+		SELECT
+		ci.*,
+		fi.SOURCE_UNIQUE_SEQ,
+		fi.PHYSICALFILE_NAME
+		FROM 
+		SS_CITY ci LEFT JOIN SS_ATTACHFILE fi
+		ON ci.CITY_SEQ = fi.SOURCE_UNIQUE_SEQ
+		WHERE
+		CITY_SEQ = #{CITY_SEQ}
+	</select>
+	
+	<!-- 로그인한 멤버의 시퀀스를 가져온다. -->
+	<select id="member" resultType="Map" parameterType="Map">
+		SELECT MEMBER_SEQ
+		FROM SS_MEMBER
+		WHERE EMAIL = #{EMAIL}
+	</select>
+	
+	<!-- 관광지 정보에 대한 리스트를 가져온다. -->
+	<select id='landmark' resultType="Map" parameterType="Map">
+		SELECT 
+        tr.*,
+		fi.SOURCE_UNIQUE_SEQ,
+        fi.PHYSICALFILE_NAME
+		FROM 
+		SS_TRAVEL_INFO tr LEFT JOIN SS_ATTACHFILE fi
+        ON tr.TRAVEL_SEQ = fi.SOURCE_UNIQUE_SEQ
+		WHERE 
+		CITY_SEQ = #{CITY_SEQ}
+	</select>
+	
+	<!-- 댓글 수정을 위한 값을 가져온다. -->
+	<select id='modcommentset' resultType="Map" parameterType="Map">
+		SELECT 
+		COMMENT_CON,
+		COMMENT_SEQ,
+		SS_STAR
+		FROM 
+		SS_COMMENT
+		WHERE 
+		COMMENT_SEQ = #{COMMENT_SEQ}
+	</select>
+	
+	<!-- 댓글을 수정한다. -->
+	<update id="modcomment" parameterType="Map">
+		UPDATE 
+		SS_COMMENT
+		SET 
+		COMMENT_CON = #{COMMENT_CON}, 
+		SS_STAR = #{SS_STAR}
+		WHERE 
+		COMMENT_SEQ = #{COMMENT_SEQ}
+	</update>
+	
+	<!-- 댓글 페이징 -->
+	<!-- MySQL의 LIMIT명령어는 시작인덱스(0부터시작), 표시할행수로 적용됨 -->
+	<select id="commentlistpagination" resultType="Map" parameterType="Map">
+		SELECT 
+		m.NAME AS MEMBER_NAME, 
+		m.MEMBER_SEQ,
+		m.EMAIL AS MEMBER_EMAIL,
+		c.COMMENT_SEQ,
+		c.COMMENT_CON, 
+		c.SS_STAR, 
+		c.REGISTRY_DATE
+		FROM 
+		SS_MEMBER m, SS_COMMENT c
+		WHERE
+        m.MEMBER_SEQ = c.MEMBER_SEQ
+        AND
+		CITY_SEQ = #{CITY_SEQ}
+		ORDER BY 
+		c.REGISTRY_DATE DESC
+		LIMIT
+		#{pagination.pageBegin}, 6
+	</select>
+	
+	<!-- 댓글의 갯수 가져오기 -->
+	<select id="commentcount" resultType="Integer" parameterType="Map">
+		SELECT 
+		COUNT(COMMENT_SEQ)
+		FROM 
+		SS_COMMENT
+		WHERE
+		CITY_SEQ = #{CITY_SEQ}
+	</select>
+	
+	<select id="citylistpagination" resultType="Map" parameterType="Map">
+ 	  SELECT two.*, com.AVGS
+        FROM 
+        (SELECT CITY_SEQ, AVG(SS_STAR) AS AVGS
+        FROM SS_COMMENT
+        GROUP BY CITY_SEQ) com RIGHT OUTER JOIN
+        (SELECT ci.*, fi.SOURCE_UNIQUE_SEQ,  fi.PHYSICALFILE_NAME
+      FROM  SS_CITY ci LEFT OUTER JOIN SS_ATTACHFILE fi
+        ON ci.CITY_SEQ = fi.SOURCE_UNIQUE_SEQ
+        ) two
+        ON com.CITY_SEQ = two.CITY_SEQ  
+			<choose>
+			    <when test="SORT_VALUE=='CITY_VIEWS'"> 
+			        ORDER BY CITY_VIEWS DESC
+			    </when>
+			    <otherwise>
+			        ORDER BY AVGS DESC
+			    </otherwise>
+			</choose>
+        LIMIT
+		#{pagination.pageBegin}, 6
+	</select>
+	
+	<!-- 도시의 갯수 가져오기 -->
+	<select id="citycount" resultType="Integer" parameterType="Map">
+		SELECT COUNT(CITY_SEQ)
+		FROM SS_CITY
+	</select>
+	<!-- 페이징 끝 -->
+	
+	<!-- 댓글 달기 -->
+	<insert id="setcomment" parameterType="Map">
+		INSERT INTO 
+		SS_COMMENT
+		VALUES(
+		#{COMMENT_SEQ},
+		#{MEMBER_SEQ},
+		#{CITY_SEQ},
+		#{COMMENT_CON},
+		'Y',
+		#{SS_STAR},
+		#{MEMBER_SEQ},
+		now(),
+		#{MEMBER_SEQ},
+		now()
+		)
+	</insert>
+	
+	<!-- 댓글 지우기 -->
+	<delete id="delcomment" parameterType="Map">
+		DELETE FROM SS_COMMENT
+		WHERE COMMENT_SEQ = #{COMMENT_SEQ}
+	</delete>
+	
+	<!-- 셀렉트 박스에서 입력된 대륙에 해당하는 국가를 가져온다. -->
+	<select id="country" resultType="Map" parameterType="Map">
+		SELECT 
+		c.COUNTRY_NAME, <!-- 국가명 -->
+		c.COUNTRY_SEQ <!-- 국가시퀀스 -->
+		FROM 
+		SS_LOCAL l, SS_COUNTRY c
+		WHERE l.LOCAL_SEQ = c.LOCAL_SEQ 
+		AND 
+		LOCAL_NAME = #{LOCAL_NAME}
+	</select>
+	
+	<!-- 셀렉트 박스에서 입력된 국가에 해당하는 도시를 가져온다. -->
+	<select id="city" resultType="Map" parameterType="Map">
+		SELECT 
+		ci.CITY_NAME, 
+		ci.CITY_SEQ
+		FROM 
+		SS_COUNTRY co, SS_CITY ci
+		WHERE 
+		co.COUNTRY_SEQ = ci.COUNTRY_SEQ
+		AND 
+		co.COUNTRY_SEQ = #{COUNTRY_SEQ}
+	</select>
+
+</mapper>

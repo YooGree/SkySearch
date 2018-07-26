@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="contact">
+
+	<select id="list" resultType="Map" parameterType="Map">
+		<!-- SELECT member.MEMBER_SEQ, member.EMAIL, member.PASSWORD, member.NAME, 
+			member.PHONE, member.ENABLE, local.LOCAL_NAME FROM skysearch.ss_member member 
+			left JOIN skysearch.ss_int_local int_local ON member.MEMBER_SEQ = int_local.MEMBER_SEQ 
+			left JOIN skysearch.ss_local local ON int_local.local_SEQ = local.local_SEQ 
+			ORDER BY NAME ASC; -->
+		SELECT *
+		FROM
+		skysearch.ss_contactus
+		WHERE ENABLE = 'Y'
+		ORDER BY REGISTRY_DATE ASC;
+	</select>
+
+	<select id="read" resultType="Map" parameterType="String">
+		select * from
+		skysearch.ss_contactus
+		where CONTACTUS_SEQ=#{CONTACTUS_SEQ}
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO
+		skysearch.ss_contactus(
+		CONTACTUS_SEQ
+		,NAME
+		,PHONE
+		,EMAIL
+		,CONTACT_TEXT
+		,REGISTER_SEQ
+		,REGISTRY_DATE
+		,MODIFIER_SEQ
+		,MODIFY_DATE
+		)
+		VALUES(
+		#{CONTACTUS_SEQ}
+		,#{NAME}
+		,#{PHONE}
+		,#{EMAIL}
+		,#{CONTACT_TEXT}
+		, #{REGISTER_SEQ}
+		, now()
+		, #{MODIFIER_SEQ}
+		, now() 
+		)
+	</insert>
+	<update id="complete" parameterType="Map">
+		update skysearch.ss_contactus
+		set
+		ENABLE='N'
+		WHERE
+		CONTACTUS_SEQ = #{CONTACTUS_SEQ}
+	</update>
+
+	
+</mapper>

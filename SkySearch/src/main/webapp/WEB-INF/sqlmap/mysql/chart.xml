@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="chart">
+	<select id="memberY" resultType="Map" parameterType="Map">
+	SELECT CONCAT(YEAR(REGISTRY_DATE)) as ym, COUNT(*) as counts
+	  FROM skysearch.ss_member
+	  GROUP BY ym
+	  ORDER BY ym;
+	</select>
+	<select id="memberM" resultType="Map" parameterType="Map">
+	SELECT CONCAT(YEAR(REGISTRY_DATE), '-', MONTH(REGISTRY_DATE)) as ym, COUNT(*) as counts
+	  FROM skysearch.ss_member
+	  GROUP BY ym
+	  ORDER BY ym;
+	</select>
+	<select id="memberD" resultType="Map" parameterType="Map">
+	SELECT CONCAT(YEAR(REGISTRY_DATE), '-',MONTH(REGISTRY_DATE), '-', DAY(REGISTRY_DATE)) as ym, COUNT(*) as counts
+	  FROM skysearch.ss_member
+	  GROUP BY ym
+	  ORDER BY ym desc
+	  LIMIT 20;
+	</select>
+	<select id="memberT" resultType="Map" parameterType="Map">
+	SELECT COUNT(*) as countT
+	FROM skysearch.ss_member;
+	</select>
+	
+	<select id="CityView" resultType="Map" parameterType="Map">
+	SELECT CITY_NAME, CITY_VIEWS
+	FROM skysearch.ss_city
+	GROUP BY CITY_NAME ORDER BY CITY_VIEWS desc, CITY_NAME
+	LIMIT 30;
+	</select>
+	
+	<select id="CityStars" resultType="Map" parameterType="Map">
+	SELECT 	c.CITY_NAME as CITY_NAME, m.avgS as CITY_VIEWS
+	FROM	skysearch.ss_city c 
+	INNER JOIN (SELECT CITY_SEQ, ROUND(AVG(SS_STAR),2) as avgS
+			FROM skysearch.ss_comment
+			GROUP by CITY_SEQ
+			ORDER BY avgS DESC
+			LIMIT 30) m
+	ON c.CITY_SEQ = m.CITY_SEQ;
+	</select>
+	
+	
+	
+</mapper> 

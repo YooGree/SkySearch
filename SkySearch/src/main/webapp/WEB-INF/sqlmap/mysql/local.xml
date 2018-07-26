@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="local">
+	<select id="list" resultType="Map" parameterType="Map">
+		SELECT
+		LOCAL_SEQ,
+		LOCAL_NAME
+		FROM skysearch.ss_local
+		ORDER BY LOCAL_SEQ DESC;
+	</select>
+	<select id="check" resultType="Map" parameterType="Map">
+		select
+		il.local_seq as LOCAL_SEQ , ll.local_name as LOCAL_NAME, il.member_SEQ	as MEMBER_SEQ 
+		from skysearch.ss_int_local il INNER JOIN skysearch.ss_local ll
+		ON il.local_seq = ll.local_seq INNER JOIN skysearch.ss_member sm
+		ON il.member_seq = sm.member_seq
+		where sm.EMAIL = #{MEMBER_SEQ}
+	</select>
+
+	<select id="localList" resultType="Map" parameterType="Map">
+		select il.local_seq as LOCAL_SEQ , ll.local_name as LOCAL_NAME ,
+		il.member_SEQ as MEMBER_SEQ
+		from skysearch.ss_int_local il INNER JOIN skysearch.ss_local ll
+		ON il.local_seq = ll.local_seq
+		<where>
+			<if test="MEMBER_SEQ != null">
+				and il.MEMBER_SEQ = #{MEMBER_SEQ}
+			</if>
+		</where>
+	</select>
+</mapper>

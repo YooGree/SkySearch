@@ -1,0 +1,52 @@
+@charset "UTF-8";
+
+
+<!--이 부분은 mypage section-padding, inner header css입니다 -->
+
+ .section-padding {
+     padding: 100px 0;
+}
+ .inner-header1 {
+     background: rgba(0, 0, 0, 0) url("../img/swiss.jpg") repeat scroll center top / 100% auto;
+     position: relative;
+}
+
+<!-- END 이 부분은 mypage section-padding, inner header css입니다 -->
+
+<!--이부분은 page 스크롤 버튼 -->
+
+div.updown {
+        margin: auto;
+        width: 500px;
+        height: 2000px;
+       
+      }  
+a.Totop {
+    position: fixed;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 5px;
+    color: #ffffff;
+    background-color: #64ddba;
+    background-color: #64ddba;
+    z-index: 999;
+    display: none;
+ }
+ 
+ a.Totop i {
+    border-radius: 5px;
+    font-size: 2.5em;
+    padding: 9px 10px;
+} 
+.fa {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+<!--END 이부분은 page 스크롤 버튼 -->
+
+
+

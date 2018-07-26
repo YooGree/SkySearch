@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+
+	<!-- User template -->
+	<definition name="layout.user" template="/WEB-INF/views/template/layout_main.jsp">
+		<put-attribute name="layout.header"
+			value="/WEB-INF/views/template/header.jsp" />
+	    <put-attribute name="layout.top"
+			value="/WEB-INF/views/template/top.jsp" />
+		<put-attribute name="layout.footer"
+			value="/WEB-INF/views/template/footer.jsp" />	
+   	</definition>
+   	
+	<!-- Admin template -->
+	<definition name="layout.admin" template="/WEB-INF/views/template/layout_admin.jsp">
+		<put-attribute name="layout.adminheader"
+			value="/WEB-INF/views/template/adminheader.jsp" /> 
+	    <put-attribute name="layout.admintop"
+			value="/WEB-INF/views/template/admintop.jsp" />
+		<put-attribute name="layout.adminleft"
+		 	value="/WEB-INF/views/template/adminleft.jsp" />
+		<put-attribute name="layout.adminfooter"
+		 	value="/WEB-INF/views/template/adminfooter.jsp" />
+   	</definition>
+	
+	<!-- home by user -->
+	<definition name="*" extends="layout.user">
+		<put-attribute name="layout.title" value="{1}" />
+		<put-attribute name="layout.body" value="/WEB-INF/views/{1}.jsp" />
+	</definition>
+
+	<definition name="/manage/*/*" extends="layout.admin">
+		<put-attribute name="layout.title" value="{1} > {2}" />
+		<put-attribute name="layout.body" value="/WEB-INF/views/manage/{1}/{2}.jsp" />
+	</definition>
+	<!-- shared view uri by user -->
+	<definition name="/*/*" extends="layout.user">
+		<put-attribute name="layout.title" value="{1} > {2}" />
+		<put-attribute name="layout.body" value="/WEB-INF/views/{1}/{2}.jsp" />
+	</definition>	
+	
+	<definition name="*/*" template="/WEB-INF/views/template/layout_popup.jsp">
+		<put-attribute name="layout.title" value="{1} > {2}" />
+		<put-attribute name="layout.body" value="/WEB-INF/views/{1}/{2}.jsp" />
+	</definition>
+	
+</tiles-definitions>

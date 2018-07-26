@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="authority">
+
+	<select id="list" resultType="Map" parameterType="Map">
+		SELECT * FROM skysearch.ss_authority
+		ORDER BY AUTHORITY_NAME ASC
+	</select>
+
+	<select id="read" resultType="Map" parameterType="String">
+		SELECT * FROM skysearch.ss_authority
+		where AUTHORITY_NAME=#{AUTHORITY_NAME}
+	</select>
+
+	<delete id="delete" parameterType="Map">
+		DELETE FROM skysearch.ss_authority
+		where AUTHORITY_NAME = #{AUTHORITY_NAME}
+	</delete>
+	
+</mapper>
+    

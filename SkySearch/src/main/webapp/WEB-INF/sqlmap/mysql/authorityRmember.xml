@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="authorityRmember">
+
+	<select id="list" resultType="Map" parameterType="Map">
+	SELECT * FROM skysearch.ss_aut_mem_rel
+ 	WHERE MEMBER_SEQ = #{MEMBER_SEQ} 
+	</select>
+
+   <insert id="insert" parameterType="Map">
+		INSERT INTO skysearch.ss_aut_mem_rel
+		(
+		MEMBER_SEQ, 
+		AUTHORITY_NAME, 
+		REGISTER_SEQ, 
+		REGISTRY_DATE, 
+		MODIFIER_SEQ, 
+		MODIFY_DATE
+		)VALUES(
+		 #{MEMBER_SEQ},
+		 'ROLE_USER',
+		 'UUID-1111-1111111',
+		 now(),
+		 'UUID-1111-1111111',
+		 now())
+	</insert>
+
+</mapper>
+    

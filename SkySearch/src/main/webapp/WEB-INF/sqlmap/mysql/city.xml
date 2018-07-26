@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="city">
+	<select id="cilist" resultType="Map" parameterType="Map">
+		SELECT
+			CITY_SEQ, 
+			CITY_NAME,
+			COUNTRY_SEQ
+			FROM skysearch.ss_city 
+			ORDER BY CITY_NAME ASC;
+	</select>
+	
+	<select id="colist" resultType="Map" parameterType="Map">
+		SELECT
+			COUNTRY_SEQ, 
+			COUNTRY_NAME,
+			LOCAL_SEQ
+			FROM skysearch.ss_country 
+			ORDER BY COUNTRY_NAME ASC;
+	</select>
+	
+	
+	
+	
+</mapper> 

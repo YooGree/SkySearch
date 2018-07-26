@@ -1,0 +1,51 @@
+@charset "UTF-8";
+
+
+<!--이 부분은 특가 부분 사용하는 css입니다 -->
+
+.tooltipmj {
+    position: relative;
+    display: inline-block;
+   /*  border-bottom: 1px dotted black; */
+}
+
+.tooltipmj .tooltiptextmj {
+    visibility: hidden; 
+    width: 250px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px 10px;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+	bottom: 150%;
+    left: 50%; 
+     margin-left: -150px; 
+    
+
+    
+}
+
+.tooltipmj:hover .tooltiptextmj {
+    visibility: visible;
+}
+
+.tooltipmj .tooltiptextmj::after
+{
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+
+
+}
+
+
+<!-- END 이 부분은 특가 부분 사용하는 css입니다 -->
